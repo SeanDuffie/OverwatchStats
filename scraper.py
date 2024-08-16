@@ -2,6 +2,7 @@
     Resources:
     - https://www.zippia.com/advice/average-cost-of-groceries-by-state/
 """
+import datetime
 import os
 from typing import List
 
@@ -113,6 +114,67 @@ def parse_html2(soup: BeautifulSoup, tag: str) -> pd.DataFrame:
 
     return ingredients
 
+def parse_html(soup: BeautifulSoup, tag: str) -> pd.DataFrame:
+    """ Extracts useful information from the parsed HTML.
+
+    Args:
+        html (BeautifulSoup): HTML file that has been received and parsed by BeautifulSoup
+
+    Returns:
+        pd.DataFrame: DataFrame that was constructed and formatted from html data
+    """
+    patches = [
+        {
+            "name": "",
+            "date": "",
+            
+        }
+    ]
+    
+    spans: ResultSet = soup.find_all(tag)
+    for elem in spans:
+        # for i, key in enumerate(['data-ingredient-quantity', 'data-ingredient-unit', 'data-ingredient-name']):
+        if len(elem.attrs) > 0:
+            for res in elem.attrs.keys():
+                if res == 'class':
+                    clss = elem.attrs.get(res)
+                    val = elem.text
+                    if clss == "PatchNotes-patchTitle"
+    # https://overwatch.blizzard.com/en-us/news/patch-notes/
+    # body
+        # main
+            # blz-section class="PatchNotesBody"
+                # div class="PatchNotes-list"
+                    # div class="PatchNotes-body"
+                    # NOTE: This section contains the list of patches
+                        # div class="PatchNotes-path PatchNotes-live"
+                        # NOTE: This section contains the important info on each patch
+                            # h3 class="PatchNotes-patchTitle"
+    title = "Overwatch 2 Retail Patch Notes - July 12, 2024".split(" - ")
+    name = title[0]
+    date = datetime.datetime.strptime(title[1], "%B %d, %Y")
+                            # div class="PatchNotes-section PatchNotes-section-hero_update"
+                                # h4 class="PatchNotes-sectionTitle"
+    role = "Tank"
+    print(name, date, role)
+                                    # div class="PatchNotesHeroUpdate"
+                                        # div class="PatchNotesHeroUpdate-header"
+                                            # h5 class="PatchNotesHeroUpdate-name"
+    hero = "Ramattra"
+                                            # div class="PatchNotesHeroUpdate-body"
+                                                # div class="PatchNotesHeroUpdate-abilitiesList"
+                                                    # div class="PatchNotesAbilityUpdate"
+                                                        # div class="PatchNotesAbilityUpdate-name"
+    ability = "Nemesis Form"
+                                                        # div class="PatchNotesAbilityUpdate-detailList"
+                                                            # ul
+                                                                # li (changes)
+    changes = [
+        "Cooldown increased from 7 to 8 seconds.",
+        "Base armor reduced from 100 to 75.",
+        "Base health reduced from 275 to 250."
+    ]
+
 
 def parse_table(soup: BeautifulSoup) -> pd.DataFrame:
     """ Scrapes a table from the webpage into a pandas dataframe
@@ -131,22 +193,9 @@ def parse_table(soup: BeautifulSoup) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    URL1 = "https://natashaskitchen.com/banana-bread-recipe-video/"
-    URL2 = "https://www.allrecipes.com/recipe/283621/the-perfect-deviled-eggs/"
-    URL3 = "https://www.lilluna.com/creamy-swiss-chicken-bake/"
-
-    HTML1 = scrape_website(url=URL1)
-    db1 = parse_html2(soup=HTML1, tag=['script'])
-    # db1.to_csv(path_or_buf=f"{RTDIR}/groceries.csv", index=False, header=False)
-    # db1 = parse_table(soup=HTML)
-    print(db1)
-
-    HTML2 = scrape_website(url=URL2)
-    db2 = parse_html2(soup=HTML2, tag=['span'])
-    # db2.to_csv(path_or_buf=f"{RTDIR}/groceries.csv", index=False, header=False)
-    print(db2)
-
-    HTML3 = scrape_website(url=URL3)
-    db = parse_html2(soup=HTML3, tag=['span', 'p'])
-    # db2.to_csv(path_or_buf=f"{RTDIR}/groceries.csv", index=False, header=False)
+    URL = "https://overwatch.blizzard.com/en-us/news/patch-notes/"
+    HTML = scrape_website(url=URL)
+    db = parse_html(soup=HTML, tag=['script'])
+    # db.to_csv(path_or_buf=f"{RTDIR}/groceries.csv", index=False, header=False)
+    # db = parse_table(soup=HTML)
     print(db)
