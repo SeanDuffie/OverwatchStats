@@ -130,21 +130,23 @@ def parse_xpth(url: str):
     assert response.status_code == 200
 
     tree: html.HtmlElement = html.fromstring(response.content)
-    elements: List[html.HtmlElement] = tree.xpath("/html/body/main/blz-section/div[@class='PatchNotes-list']/div[@class='PatchNotes-body']/div[@class='PatchNotes-live']")
+    elements: List[html.HtmlElement] = tree.xpath("/html/body/main/blz-section/div[@class='PatchNotes-list']/div[@class='PatchNotes-body']/div[@class='PatchNotes-patch PatchNotes-live']")
     for elem in elements:
         titles: List[html.HtmlElement] = elem.xpath("h3[@class='PatchNotes-patchTitle']")
         for title in titles:
             print(f"Patch: {title.text}")
             split_title = title.text.split(" - ")
-            name = split_title[0]
-            date = datetime.datetime.strptime(split_title[1], "%B %d, %Y")
-            sections: List[html.HtmlElement] = elem.xpath("div[@class='PatchNotes-section-hero_update']")
+            # name = split_title[0]
+            # date = datetime.datetime.strptime(split_title[1], "%B %d, %Y")
+            sections: List[html.HtmlElement] = elem.xpath("div[@class='PatchNotes-section PatchNotes-section-hero_update']")
             for section in sections:
                 print(f"\t{section.text}")
-                roles = section.xpath("div/div")
+                roles: List[html.HtmlElement] = section.xpath("div/div[@class='PatchNotes-section PatchNotes-section-generic_update']")
                 for role in roles:
-                    heroes = role.xpath("")
+                    print(f"\t\t{role.append("h4").text}")
+                    heroes: List[html.HtmlElement] = role.xpath("")
                     for hero in heroes:
+                        print(hero.text)
 
     # # https://overwatch.blizzard.com/en-us/news/patch-notes/
     # # html/body/main/blz-section class="PatchNotesBody"/div class="PatchNotes-list"/div class="PatchNotes-body"/div class="PatchNotes-path PatchNotes-live"
@@ -163,7 +165,7 @@ if __name__ == "__main__":
     URL = "https://overwatch.blizzard.com/en-us/news/patch-notes/"
     # HTML = scrape_website(url=URL)
     # parse_html(soup=HTML, tag=['script'])
-    ps = parse_xpth(URL)
+    parse_xpth(URL)
     # db.to_csv(path_or_buf=f"{RTDIR}/groceries.csv", index=False, header=False)
     # db = parse_table(soup=HTML)
     # print(db)
