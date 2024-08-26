@@ -132,6 +132,8 @@ def parse_xpth(url: str):
     tree: html.HtmlElement = html.fromstring(response.content)
     elements: List[html.HtmlElement] = tree.xpath("/html/body/main/blz-section/div[@class='PatchNotes-list']/div[@class='PatchNotes-body']/div[@class='PatchNotes-patch PatchNotes-live']")
     for elem in elements:
+        print(elem.attrib['class'])
+        # print(elem.)
         titles: List[html.HtmlElement] = elem.xpath("h3[@class='PatchNotes-patchTitle']")
         for title in titles:
             print(f"Patch: {title.text}")
