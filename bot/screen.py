@@ -39,6 +39,12 @@ class Screen:
             self.left = 0
             self.width = int(self.p_mon.width)
             self.height = int(self.p_mon.height)
+        elif self.img is not None:
+            h, w, chan = self.img.shape
+            self.top = int(float(box["top"])*h)
+            self.left = int(float(box["left"])*w)
+            self.width = int(float(box["width"])*w)
+            self.height = int(float(box["height"])*h)
         else:
             self.top = int(float(box["top"])*self.p_mon.height)
             self.left = int(float(box["left"])*self.p_mon.width)
@@ -241,6 +247,6 @@ class Screen:
     def get_image(self):
         """ Grabs the most recent screen frame """
         if self.img is not None:
-            return self.img[self.bounding_box["top"]:self.bounding_box["top"]+self.bounding_box["height"], self.bounding_box["left"]:self.bounding_box["left"]+self.bounding_box["width"]]
+            return self.img[self.top:self.top + self.height, self.left:self.left + self.width]
         sct_img = np.array(self.sct.grab(self.bounding_box))
         return sct_img
