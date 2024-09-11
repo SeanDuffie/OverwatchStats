@@ -36,17 +36,18 @@ def overwatch():
         - if current stamina is less than 10% of total, stop sprinting
     """
     # Initialize the Screen Capture and the Text Reader
-    top = 7 / 52
-    left = 12 / 72
-    width = 31 / 72
-    height = 27 / 52
+    top = 0.2
+    left = 0.28
+    width = 0.4
+    height = 0.7
     bbox = {
             "top": top,
             "left": left,
             "width": width,
             "height": height
     }
-    scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
+    scn = bot.Screen(box=bbox)
+    # scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
     rdr = bot.Reader(scn.get_image())
     plyr = bot.Player()
     htky = bot.Hotkey()
