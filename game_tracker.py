@@ -46,55 +46,47 @@ def overwatch():
             "width": width,
             "height": height
     }
-    scn = bot.Screen(box=bbox)
-    # scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
+    # scn = bot.Screen(box=bbox)
+    scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
     rdr = bot.Reader(scn.get_image())
     plyr = bot.Player()
-    htky = bot.Hotkey()
+    htky = bot.Hotkey(toggle_key=bot.keyboard.Key.tab)
     t1 = threading.Thread(target=htky.run, args=())
     t1.start()
 
     while htky.alive:
         if htky.active:
             # Grab a new image from the screen and read the text
-            rdr.update_img(scn.get_image())
+            raw_img = scn.get_image()
 
             # If in debug mode, show the image being read, and the text that came from it
             if DEBUG:
-                rdr.show_img("Preview Raw")
+                # rdr.show_img("Preview Raw")
+                cv2.imshow("Preview Raw", raw_img)
+                cv2.waitKey(17)
 
-            try:
-                text: str = rdr.read_text()
-            except UnboundLocalError: # Thrown when the image is blank or monocolor
-                logger.error("Failed to read Text")
-                text = ""
+            rows = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, raw_img.shape[2]]
+            cols = [ 0, 1, 2, 3, 4, 5, 6, raw_img.shape[1] ]
 
-            # If in debug mode, show the image being read, and the text that came from it
-            if DEBUG:
-                rdr.show_img()
+            for team in range(2):
+                whttxt = not bool(team)
+                for player in range(5):
+                    row = rows[5*team+player]
+                    next_row = rows[5*team+player+1]
+                    for col in range(len(cols)-1):
+                        if col == 0:
+                            continue
+                        logger.warning("Cropping dimensions: [%d:%d, %d:%d]", cols[col], cols[col+1], rows[row], rows[next_row])
+                        rdr.update_img(raw_img[cols[col]:cols[col+1], rows[row]:rows[next_row]])
 
-            # # Split values and remove incorrect numbers
-            # try:
-            #     if text != "":
-            #         logger.debug(text)
-            #         current, total = text.split("/", 1)
-            #         current = int("".join(c for c in current if c.isdigit()))
-            #         total = int("".join(c for c in total if c.isdigit()))
-            #         ratio = current/total
-            #         logger.info("Ratio = %.2f", ratio)
+                        try:
+                            text: str = rdr.read_text(white_text=whttxt)
+                            logger.info("Team %d | Player %d | %s", team, player, text)
+                        except UnboundLocalError: # Thrown when the image is blank or monocolor
+                            logger.error("Failed to read Text")
+                            text = ""
+            htky.active = False
 
-            #         # if current is greater than 90% total, start sprinting
-            #         if ratio > .9:
-            #             plyr.key_down("shiftleft")
-            #         # if current is less than 10% total, stop sprinting
-            #         elif ratio < .1:
-            #             plyr.key_up("shiftleft")
-            #     else:
-            #         logger.warning("No text detected")
-            #         # pass
-            # except ValueError:
-            #     logger.error("Failed to split text")
-            #     # pass
         else:
             logger.info("Inactive")
             plyr.key_up("w")
