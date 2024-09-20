@@ -58,9 +58,16 @@ class Reader:
         # Check loaded image
         if self.img is None:
             logger.error("No image loaded. Call update_img() or init with img.")
-            sys.exit(1)
+            # sys.exit(1)
+            return ""
+        try:
+            assert self.img.shape[0] != 0
+            assert self.img.shape[1] != 0
+        except AssertionError:
+            logger.error("Image has an empty dimension! %s", self.img.shape)
+            return ""
 
-        # Convert the image to gray scale
+        # Convert the image to gray scale   
         gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         if DEBUG:
             cv2.imshow("Grayscale", gray)
