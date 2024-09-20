@@ -46,7 +46,7 @@ class Reader:
         cv2.imshow(name, self.img)
         cv2.waitKey(17)
 
-    def read_text(self, white_text: bool = True):
+    def read_text(self, white_text: bool = True) -> str:
         """ Read the text contained within the bounding box
 
         Args:
