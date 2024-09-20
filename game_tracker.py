@@ -2,6 +2,15 @@
     @author Sean Duffie
     @brief Track leaderboard statistics when pressing tab
 
+TODO: Calculate ult efficiency. How much charge would've been gained in-between reaching full charge and using ult?
+TODO: Calculate damage-to-kill ratio. How much of your damage output is getting healed? (Hard to factor in assists). Compare to enemy team's health pool.
+TODO: How can I calculate active combat time?
+TODO: Calculate potential damage with accuracy, critical, splash, and active combat time.
+TODO: Team comp analysis (Friendly and enemy)
+    - counters
+    - range
+    - mobility
+
 NOTE: Eliminations / Damage dealt show how often someone you shoot dies.
     - The better this ratio is, the more effective the damage that you deal is,
       as you are actually getting elims and not feeding tanks/support
