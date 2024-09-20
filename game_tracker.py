@@ -9,6 +9,7 @@ NOTE: Eliminations are given when you contribute *UNHEALED* damage to a kill
 NOTE: Assists are given when you apply a buff/healing to an ally who gets a kill,
       or a debuff to an enemy who is killed.
 """
+import datetime
 import logging
 import sys
 import threading
@@ -46,8 +47,8 @@ def overwatch():
             "width": width,
             "height": height
     }
-    # scn = bot.Screen(box=bbox)
-    scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
+    scn = bot.Screen(box=bbox)
+    # scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
     rdr = bot.Reader(scn.get_image())
     plyr = bot.Player()
     htky = bot.Hotkey(toggle_key=bot.keyboard.Key.tab)
@@ -58,6 +59,7 @@ def overwatch():
         if htky.active:
             # Grab a new image from the screen and read the text
             raw_img = scn.get_image()
+            now = datetime.datetime.now()
 
             # If in debug mode, show the image being read, and the text that came from it
             if DEBUG:
@@ -65,6 +67,7 @@ def overwatch():
                 cv2.imshow("Preview Raw", raw_img)
                 cv2.waitKey(17)
 
+            # TODO: Replace with actual pixel coordinates
             rows = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, raw_img.shape[2]]
             cols = [ 0, 1, 2, 3, 4, 5, 6, raw_img.shape[1] ]
 
