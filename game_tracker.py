@@ -11,6 +11,13 @@ TODO: Team comp analysis (Friendly and enemy)
     - range
     - mobility
 
+TODO: HUD Desktop App
+    - Target priority
+    - Tips for your hero
+    - Tips against enemies
+    - Map overview with health packs, objective paths, spawns, and high grounds
+        - Time to walk to point from each spawn
+
 NOTE: Eliminations / Damage dealt show how often someone you shoot dies.
     - The better this ratio is, the more effective the damage that you deal is,
       as you are actually getting elims and not feeding tanks/support
@@ -22,6 +29,7 @@ import datetime
 import logging
 import sys
 import threading
+from typing import List
 
 import cv2
 
@@ -34,6 +42,29 @@ DEBUG = True
 logFormat.format_logs(logger_name="Auto")
 logger = logging.getLogger("Auto")
 
+class Row:
+    def __init__(self, lst: List[str]):
+        logger.warning(lst)
+        self.name = lst[0]
+        self.elims = lst[1]
+        self.assists = lst[2]
+        self.deaths = lst[3]
+        self.dmg = lst[4]
+        self.heals = lst[5]
+        self.mit = lst[6]
+
+    def __str__(self):
+        msg = f" Player {self.name}:\n\tElims: {self.elims}\n\tAssists: {self.assists}\n\tDeaths: {self.deaths}\n\tDMG: {self.dmg}\n\tHealing: {self.heals}\n\tMit: {self.mit}"
+        return msg
+
+# function to display the coordinates of the points clicked on the image
+def click_event(event, x, y, flags, params):
+    """ TEMPORARY """
+    # checking for left mouse clicks
+    if event == cv2.EVENT_LBUTTONDOWN:
+        # displaying the coordinates
+        # on the Shell
+        print(x, ' ', y)
 
 def overwatch():
     """ Monitors Stamina and chooses to sprint or walk bases on exhaustion
@@ -48,7 +79,7 @@ def overwatch():
     # Initialize the Screen Capture and the Text Reader
     top = 0.2
     left = 0.28
-    width = 0.4
+    width = 0.45
     height = 0.7
     bbox = {
             "top": top,
@@ -57,9 +88,8 @@ def overwatch():
             "height": height
     }
     scn = bot.Screen(box=bbox)
-    # scn = bot.Screen(box=bbox, path="./Scoreboard.webp")
+    # scn = bot.Screen(box=bbox, path="./Example Scoreboard.png")
     rdr = bot.Reader(scn.get_image())
-    plyr = bot.Player()
     htky = bot.Hotkey(toggle_key=bot.keyboard.Key.tab)
     t1 = threading.Thread(target=htky.run, args=())
     t1.start()
@@ -73,42 +103,47 @@ def overwatch():
             # If in debug mode, show the image being read, and the text that came from it
             if DEBUG:
                 # rdr.show_img("Preview Raw")
+                logger.warning("Acquired Dimensions: %s", raw_img.shape)
                 cv2.imshow("Preview Raw", raw_img)
-                cv2.waitKey(17)
+                # cv2.waitKey(17)
+
+                # setting mouse handler for the image
+                # and calling the click_event() function
+                cv2.setMouseCallback('Preview Raw', click_event)
 
             # TODO: Replace with actual pixel coordinates
-            rows = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, raw_img.shape[2]]
-            cols = [ 0, 1, 2, 3, 4, 5, 6, raw_img.shape[1] ]
+            rows = [0, 82, 169, 254, 339, 484, 631, 717, 802, 886, 970, raw_img.shape[0]]
+            cols = [36, 120, 497, 572, 645, 718, 865, 997, raw_img.shape[1]]
 
             for team in range(2):
                 whttxt = not bool(team)
                 for player in range(5):
+                    lst = []
                     row = rows[5*team+player]
                     next_row = rows[5*team+player+1]
                     for col in range(len(cols)-1):
+                        sub_img = raw_img[row:next_row, cols[col]:cols[col+1]]
+                        # Show player icon
                         if col == 0:
+                            cv2.imshow("Char", sub_img)
                             continue
-                        logger.warning("Cropping dimensions: [%d:%d, %d:%d]", cols[col], cols[col+1], rows[row], rows[next_row])
-                        rdr.update_img(raw_img[cols[col]:cols[col+1], rows[row]:rows[next_row]])
+
+                        logger.warning("Dimensions: %s | (%s:%s, %s:%s)", sub_img.shape, row, next_row, cols[col], cols[col+1])
+                        rdr.update_img(sub_img)
 
                         try:
                             text: str = rdr.read_text(white_text=whttxt)
-                            logger.info("Team %d | Player %d | %s", team, player, text)
+                            logger.info(text)
+                            cv2.waitKey(0)
                         except UnboundLocalError: # Thrown when the image is blank or monocolor
                             logger.error("Failed to read Text")
                             text = ""
-            htky.active = False
+                        lst.append(text)
 
-        else:
-            logger.info("Inactive")
-            plyr.key_up("w")
-            plyr.key_up("shiftleft")
-            while not htky.active:
-                if htky.alive:
-                    cv2.waitKey(17)
-                else:
-                    break
-            logger.info("Active")
+                    cur = Row(lst)
+                    logger.info(cur)
+                    logger.info(lst)
+            htky.active = False
 
     t1.join()
     logger.info("End main")
