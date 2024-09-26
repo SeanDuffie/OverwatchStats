@@ -1,0 +1,60 @@
+Health Pool:
+- Passive healing
+    - All characters regenerate health after a certain amount of time not taking damage.
+    - After 5 seconds, regen 10 + 5% max health.
+    - Support role starts regenerating after 2.5 seconds.
+- Armor
+    - Armor plays a HUGE role in reducing the damage that you take. 
+    - Tanks with Armor
+        1. DVA
+        2. Mauga
+        3. Orisa
+        4. Ramattra
+        5. Reinhardt
+        6. Winston
+        7. Wrecking Ball
+    - DPS with Armor
+        1. Bastion
+        2. Torbjorn
+    - Support with Armor
+        1. Brigitte
+- Shields
+    - Shields have a bonus to recovery rate
+    - After 3 seconds, regen 30/sec
+    - Tanks with Shields
+        1. Sigma
+        2. Wrecking Ball
+        3. Zarya
+    - DPS with Shields
+        1. Symmetra
+    - Supports with Shields
+        1. Juno
+        2. Lifeweaver
+        3. Zenyatta
+- Characters with only raw Health
+    - Tanks
+        - Doomfist
+        - Roadhog
+    - DPS
+        - Ashe
+        - Cassidy
+        - Echo
+        - Genji
+        - Hanzo
+        - Junkrat
+        - Mei
+        - Pharah
+        - Reaper
+        - Sojourn
+        - Soldier
+        - Sombra
+        - Tracer
+        - Venture
+        - Widow
+    - Supports
+        - Ana
+        - Baptiste
+        - Illari
+        - Kiriko
+        - Lucio
+        - Moira

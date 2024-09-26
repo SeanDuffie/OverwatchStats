@@ -90,13 +90,13 @@ class Reader:
         # dilation = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, rect_kernel)
 
         # Apply a Gaussian Blur, this seems to work the best overall when given a white background and dark text
-        dilation = cv2.GaussianBlur(thresh, (7,7), 0)
-        self.img = dilation.copy()
-        if DEBUG:
-            cv2.imshow("Dilation", dilation)
+        # dilation = cv2.GaussianBlur(thresh, (7,7), 0)
+        # self.img = thresh.copy()
+        # if DEBUG:
+        #     cv2.imshow("Dilation", dilation)
 
         # Finding contours
-        contours = cv2.findContours(dilation, cv2.RETR_EXTERNAL,
+        contours = cv2.findContours(thresh, cv2.RETR_EXTERNAL,
                                                 cv2.CHAIN_APPROX_NONE)[0]
 
         # Looping through the identified contours
@@ -108,13 +108,13 @@ class Reader:
             x, y, w, h = cv2.boundingRect(cnt)
 
             # Cropping the text block for giving input to OCR
-            cropped = dilation[y:y + h, x:x + w]
+            cropped = thresh[y:y + h, x:x + w]
 
             # Apply OCR on the cropped image
-            text += pytesseract.image_to_string(cropped)
+            text += pytesseract.image_to_string(image=cropped, config='--psm 6')
 
             if DEBUG:
-                cv2.imshow("cropped", dilation)
+                cv2.imshow("cropped", thresh)
 
         return text
 
