@@ -58,3 +58,12 @@ Health Pool:
         - Kiriko
         - Lucio
         - Moira
+Death Timer:
+- Respawn
+    - Default respawn time is 12 seconds
+    - Overtime increases the timer by 3 seconds
+    - Having forward spawn increases your timer by 2 seconds
+    - Wave Respawn?
+        - Teammates that die within 6 seconds of the first death spawn together when the first hero respawns (min = 6sec, max = 12sec)
+        - If nobody joins the respawn wave, 2 seconds is subtracted from the respawn time
+        - 
