@@ -12,6 +12,9 @@ class Map(abc.ABC):
     gametype: Literal['control', 'escort', 'flashpoint', 'hybrid', 'push', 'clash']
     health_packs: List[tuple[int, int]]
     top_down: np.NDArray
+    team1_spawns: List[tuple[int, int]]
+    team2_spawns: List[tuple[int, int]]
+    checkpoints : List[tuple[int, int]]
 
     # def __init__(self):
         
